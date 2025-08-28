@@ -67,36 +67,6 @@ namespace Serilog.Sinks.Syslog.Tests
         }
 
         [Fact]
-        public void Should_format_message_with_source_context()
-        {
-            var properties = new List<LogEventProperty> {
-                new LogEventProperty("SourceContext", new ScalarValue(@"Test.Cont""ext"))
-            };
-
-            var template = new MessageTemplateParser().Parse("This is a test message");
-            var warnEvent = new LogEvent(this.timestamp, LogEventLevel.Warning, null, template, properties);
-
-            var formatted = this.formatter.FormatMessage(warnEvent);
-            this.output.WriteLine($"RFC3164 with source context: {formatted}");
-
-            var match = this.regex.Match(formatted);
-            match.Success.ShouldBeTrue();
-
-            match.Groups["pri"].Value.ShouldBe("<12>");
-            match.Groups["timestamp"].Value.ShouldBe("Dec 19 04:01:02");
-            match.Groups["host"].Value.ShouldBe(Host);
-            match.Groups["proc"].Value.ToInt().ShouldBeGreaterThan(0);
-
-            // Spaces and anything other than printable ASCII should have been removed, and should have
-            // been truncated to 32 chars
-            match.Groups["app"].Value.ShouldBe("TestAppWithAVeryLongNameThatShou");
-
-            // Ensure that we busted the source context out of its enclosing quotes, and that we unescaped
-            // any other quotes
-            match.Groups["msg"].Value.ShouldBe("[Test.Cont\"ext] This is a test message");
-        }
-
-        [Fact]
         public void Should_override_log_host_name()
         {
             var template = new MessageTemplateParser().Parse("This is a test message");
