@@ -62,7 +62,7 @@ var log = new LoggerConfiguration()
 An example of an RFC3164 message:
 
 ```
-<12>Dec 19 04:01:02 MYHOST MyApp[1912]: [Source.Context] This is a test message
+<12>Dec 19 04:01:02 MYHOST MyApp[1912]: This is a test message
 ```
 
 An example of an RFC5424 message:
