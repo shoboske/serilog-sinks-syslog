@@ -56,37 +56,9 @@ namespace Serilog.Sinks.Syslog
 
             var timestamp = String.Format(CultureInfo.InvariantCulture, dateFormat, logEvent.Timestamp);
 
-            // If the log event contains a source context, we will render it as part of the syslog CONTENT
-            // field, as RFC3164 doesn't have anywhere else to put it
-            var context = GetSourceContext(logEvent);
-
             var msg = RenderMessage(logEvent);
 
-            return context != null
-                ? $"<{priority}>{timestamp} {this.Host} {this.applicationName}[{ProcessId}]: [{context}] {msg}"
-                : $"<{priority}>{timestamp} {this.Host} {this.applicationName}[{ProcessId}]: {msg}";
-        }
-
-        /// <summary>
-        /// Get the LogEvent's SourceContext in a format suitable for use as part of the CONTENT field
-        /// of a syslog message (All Serilog property values are quoted and escaped, which is unnecessary
-        /// here)
-        /// </summary>
-        /// <param name="logEvent">The LogEvent to extract the context from</param>
-        /// <returns>The processed SourceContext</returns>
-        private static string GetSourceContext(LogEvent logEvent)
-        {
-            var hasContext = logEvent.Properties.TryGetValue("SourceContext", out LogEventPropertyValue propertyValue);
-
-            if (!hasContext)
-                return null;
-
-            // Trim surrounding quotes, and unescape all others
-            var result = propertyValue
-                .ToString()
-                .TrimAndUnescapeQuotes();
-
-            return result;
+            return $"<{priority}>{timestamp} {this.Host} {this.applicationName}[{ProcessId}]: {msg}";
         }
     }
 }
